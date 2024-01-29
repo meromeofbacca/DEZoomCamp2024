@@ -1,0 +1,140 @@
+1) --rm 
+docker run --help | grep Automically
+
+2) wheel 0.42.0	
+docker run -it --entrypoint=bash python:3.9
+pip list
+
+3) 15612
+SELECT
+	CAST(lpep_pickup_datetime as DATE) as "pickup",
+	CAST(lpep_dropoff_datetime as DATE) as "dropoff",
+	COUNT(1)
+FROM
+	green_taxi_data t JOIN zones zpu
+		ON t."PULocationID" = zpu."LocationID"
+	JOIN zones zdo
+		ON t."PULocationID" = zdo."LocationID"
+WHERE
+	CAST(lpep_pickup_datetime as DATE)='2019-09-18'
+	AND
+	CAST(lpep_pickup_datetime as DATE)='2019-09-18'
+GROUP BY
+	CAST(lpep_pickup_datetime as DATE),
+	CAST(lpep_dropoff_datetime as DATE)
+
+4) 2019-09-26
+SELECT
+	CAST(lpep_pickup_datetime as DATE) as "pickup",
+	MAX(trip_distance)
+FROM
+	green_taxi_data t JOIN zones zpu
+		ON t."PULocationID" = zpu."LocationID"
+GROUP BY
+	CAST(lpep_pickup_datetime as DATE)
+ORDER BY
+	MAX(trip_distance) DESC
+
+5) "Brooklyn" "Manhattan" "Queens"
+SELECT
+	CAST(lpep_pickup_datetime as DATE) as "pickup",
+	zpu."Borough",
+	SUM(total_amount)
+FROM
+	green_taxi_data t JOIN zones zpu
+		ON t."PULocationID" = zpu."LocationID"
+WHERE 
+	zpu."Borough"!='Unknown' AND 
+	CAST(lpep_pickup_datetime as DATE)='2019-09-18'
+GROUP BY
+	CAST(lpep_pickup_datetime as DATE),
+	zpu."Borough"
+ORDER BY
+	SUM(total_amount) DESC
+
+6) JFK Airport
+SELECT
+	zpu."Zone",
+	t."DOLocationID",
+	MAX(tip_amount)
+FROM
+	green_taxi_data t JOIN zones zpu
+		ON t."PULocationID" = zpu."LocationID"
+	JOIN zones zdo
+		ON t."DOLocationID" = zdo."LocationID"
+WHERE
+	t."PULocationID"='7'
+GROUP BY 
+	t."DOLocationID",
+	zpu."Zone"
+ORDER BY
+	MAX(tip_amount) DESC
+
+7)
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # google_bigquery_dataset.demo_dataset will be created
+  + resource "google_bigquery_dataset" "demo_dataset" {
+      + creation_time              = (known after apply)
+      + dataset_id                 = "demo_dataset"
+      + default_collation          = (known after apply)
+      + delete_contents_on_destroy = false
+      + effective_labels           = (known after apply)
+      + etag                       = (known after apply)
+      + id                         = (known after apply)
+      + is_case_insensitive        = (known after apply)
+      + last_modified_time         = (known after apply)
+      + location                   = "US"
+      + max_time_travel_hours      = (known after apply)
+      + project                    = "taxis-nyc-411819"
+      + self_link                  = (known after apply)
+      + storage_billing_model      = (known after apply)
+      + terraform_labels           = (known after apply)
+    }
+
+  # google_storage_bucket.demo-bucket will be created
+  + resource "google_storage_bucket" "demo-bucket" {
+      + effective_labels            = (known after apply)
+      + force_destroy               = true
+      + id                          = (known after apply)
+      + location                    = "US"
+      + name                        = "taxis-nyc-411819-terraform-bucket"
+      + project                     = (known after apply)
+      + public_access_prevention    = (known after apply)
+      + rpo                         = (known after apply)
+      + self_link                   = (known after apply)
+      + storage_class               = "STANDARD"
+      + terraform_labels            = (known after apply)
+      + uniform_bucket_level_access = (known after apply)
+      + url                         = (known after apply)
+
+      + lifecycle_rule {
+          + action {
+              + type = "AbortIncompleteMultipartUpload"
+            }
+          + condition {
+              + age                   = 1
+              + matches_prefix        = []
+              + matches_storage_class = []
+              + matches_suffix        = []
+              + with_state            = (known after apply)
+            }
+        }
+    }
+
+Plan: 2 to add, 0 to change, 0 to destroy.
+
+Do you want to perform these actions?
+  Terraform will perform the actions described above.
+  Only 'yes' will be accepted to approve.
+
+  Enter a value: yes
+
+google_bigquery_dataset.demo_dataset: Creating...
+google_storage_bucket.demo-bucket: Creating...
+google_bigquery_dataset.demo_dataset: Creation complete after 0s [id=projects/taxis-nyc-411819/datasets/demo_dataset]
+google_storage_bucket.demo-bucket: Creation complete after 1s [id=taxis-nyc-411819-terraform-bucket]
