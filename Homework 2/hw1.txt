@@ -9,7 +9,14 @@ data['lpep_pickup_date'] = data['lpep_pickup_datetime'].dt.date
 
 4) What are the existing values of VendorID in the dataset?
 1 or 2
-SELECT a1 ORDER BY a1 DESC
+
+select 
+    vendor_id 
+from 
+    mage.green_Taxi 
+order by
+    vendor_id DESC
+
 
 5) How many columns need to be renamed to snake case?
 4
